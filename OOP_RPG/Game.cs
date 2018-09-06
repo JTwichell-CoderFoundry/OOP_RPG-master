@@ -31,6 +31,7 @@ namespace OOP_RPG
             Console.WriteLine("2. View Inventory");
             Console.WriteLine("3. Fight Monster");
             Console.WriteLine("4. Go To Weapons Shop");
+            Console.WriteLine("5. Quit");
 
             Console.Write("Enter your selection: ");
             var input = Console.ReadLine();
@@ -67,6 +68,9 @@ namespace OOP_RPG
                     break;
                 case "4":
                     Shop.Menu();
+                    break;
+                case "5":
+                    Environment.Exit(0);
                     break;
                 default:
                     return;

@@ -14,7 +14,11 @@ namespace OOP_RPG
         //we will be storing a string as a key and an object of unknown type
         //as the value. We can then retrieve the object by searching the
         //Dictionary for a particular key.
-        private Dictionary<string, object> ItemCatalog { get; set; }
+
+        //private Dictionary<string, object> ItemCatalog { get; set; }
+        private Dictionary<string, Potion> PotionCatalog { get; set; }
+        private Dictionary<string, Weapon> WeaponCatalog { get; set; }
+        private Dictionary<string, Armor> ArmorCatalog { get; set; }
 
         public Game Game { get; set; }
 
@@ -23,7 +27,13 @@ namespace OOP_RPG
             this.ArmorList = new List<Armor>();
             this.WeaponsList = new List<Weapon>();
             this.PotionsList = new List<Potion>();
-            this.ItemCatalog = new Dictionary<string, object>();
+
+            //this.ItemCatalog = new Dictionary<string, object>();
+            this.PotionCatalog = new Dictionary<string, Potion>();
+            this.WeaponCatalog = new Dictionary<string, Weapon>();
+            this.ArmorCatalog = new Dictionary<string, Armor>();
+
+
             this.Game = game;
 
             StockShop();
@@ -80,7 +90,9 @@ namespace OOP_RPG
         public void ShowInventory()
         {
             FancyWrite($"Here is what we have in stock as of today, {DateTime.Now}");
-            ItemCatalog.Clear();
+
+            //ItemCatalog.Clear();
+
             ListPotions();
             ListArmor();
             ListWeapons();
@@ -96,12 +108,13 @@ namespace OOP_RPG
         {
             try
             {
+                ArmorCatalog.Clear();
                 var count = 1;
                 Console.WriteLine("-- Armor for sale--");
                 foreach (var armor in ArmorList.OrderBy(x => x.Name))
                 {
                     Console.WriteLine($"a{count}. {armor.Name} - Original Value: {armor.OriginalValue}, Resell Value: {armor.ResellValue}");
-                    ItemCatalog.Add($"a{count}", armor);
+                    ArmorCatalog.Add($"a{count}", armor);
                     count++;
                 }
                 Console.WriteLine("");
@@ -114,13 +127,15 @@ namespace OOP_RPG
 
         public void ListWeapons()
         {
+            WeaponCatalog.Clear();
+
             var count = 1;
             Console.WriteLine("-- Weapons for sale--");
             foreach(var weapon in WeaponsList.OrderBy(w => w.Name))
             {
                 Console.WriteLine($"w{count}. {weapon.Name} - Original Value: {weapon.OriginalValue}, Resell Value: {weapon.ResellValue}");
 
-                ItemCatalog.Add($"w{count}", weapon);
+                WeaponCatalog.Add($"w{count}", weapon);
                 count++;
             }
             Console.WriteLine("");
@@ -128,12 +143,14 @@ namespace OOP_RPG
 
         public void ListPotions()
         {
+            PotionCatalog.Clear();
+
             var count = 1;
             Console.WriteLine("--Potions for sale--");
             foreach (var potion in PotionsList.OrderBy(x => x.Name))
             {
                 Console.WriteLine($"p{count}. {potion.Name} - Original Value: {potion.OriginalValue}, Resell Value: {potion.ResellValue}");
-                ItemCatalog.Add($"p{count}", potion);
+                PotionCatalog.Add($"p{count}", potion);
                 count++;
             }
             Console.WriteLine("");
@@ -149,41 +166,57 @@ namespace OOP_RPG
             }
           
             //Now I need to check to see if the user selection is present in the Dictionary before proceeding
-            if (!ItemCatalog.ContainsKey(selection))
-            {               
-                FancyWrite("That selection is not valid please try again.");
-                Sell();
+            switch(selection.Substring(0,1))
+            {
+                case "a":
+                    if(!ArmorCatalog.ContainsKey(selection))
+                    {
+                        FancyWrite("There is no Armor that corresponds to the selection you made, please try again.");
+                        Sell();
+                    }
+                    break;
+                case "p":
+                    if (!PotionCatalog.ContainsKey(selection))
+                    {
+                        FancyWrite("There is no Potion that corresponds to the selection you made, please try again.");
+                        Sell();
+                    }
+                    break;
+                case "w":
+                    if (!WeaponCatalog.ContainsKey(selection))
+                    {
+                        FancyWrite("There is no Weapon that corresponds to the selection you made, please try again.");
+                        Sell();
+                    }
+                    break;
             }
-
+            
             if(VerifyFunds(selection))
             {
                 FinalizeSale(selection);
             }
-
         }
 
         private void FinalizeSale(string selection)
         {
             switch (selection.Substring(0, 1))
             {
-                case "a":
-                    var armor = (Armor)ItemCatalog[selection];
-                    Game.Hero.Gold -= armor.OriginalValue;
-                    Game.Hero.ArmorsBag.Add(armor);
-                    this.ArmorList.Remove(armor);
+                case "a":                 
+                    Game.Hero.Gold -= ArmorCatalog[selection].OriginalValue;
+                    Game.Hero.ArmorsBag.Add(ArmorCatalog[selection]);
+                    this.ArmorList.Remove(ArmorCatalog[selection]);
                     break;
                    
-                case "p":
-                    var potion = (Potion)ItemCatalog[selection];
-                    Game.Hero.Gold -= potion.OriginalValue;
-                    Game.Hero.PotionsBag.Add(potion);
-                    this.PotionsList.Remove(potion);
+                case "p":                   
+                    Game.Hero.Gold -= PotionCatalog[selection].OriginalValue;
+                    Game.Hero.PotionsBag.Add(PotionCatalog[selection]);
+                    this.PotionsList.Remove(PotionCatalog[selection]);
                     break;
                 case "w":
-                    var weapon = (Weapon)ItemCatalog[selection];
-                    Game.Hero.Gold -= weapon.OriginalValue;
-                    Game.Hero.WeaponsBag.Add(weapon);
-                    this.WeaponsList.Remove(weapon);
+                    
+                    Game.Hero.Gold -= WeaponCatalog[selection].OriginalValue;
+                    Game.Hero.WeaponsBag.Add(WeaponCatalog[selection]);
+                    this.WeaponsList.Remove(WeaponCatalog[selection]);
                     break;
                 default:
                     break;      
@@ -195,15 +228,12 @@ namespace OOP_RPG
         {            
             switch (selection.Substring(0,1))
             {
-                case "a":
-                    var armor = (Armor)ItemCatalog[selection];
-                    return Game.Hero.Gold >= armor.OriginalValue;
-                case "p":
-                    var potion = (Potion)ItemCatalog[selection];
-                    return Game.Hero.Gold >= potion.OriginalValue;
+                case "a":                   
+                    return Game.Hero.Gold >= ArmorCatalog[selection].OriginalValue;
+                case "p":                   
+                    return Game.Hero.Gold >= PotionCatalog[selection].OriginalValue;
                 case "w":
-                    var weapon = (Weapon)ItemCatalog[selection];
-                    return Game.Hero.Gold >= weapon.OriginalValue;
+                    return Game.Hero.Gold >= WeaponCatalog[selection].OriginalValue;
                 default:
                     return false;
             }
