@@ -23,5 +23,13 @@ namespace OOP_RPG
             this.Strength = strength;
         }
        
+        public Weapon(WeaponStruct weapon)
+        {
+            this.OriginalValue = weapon.OriginalValue;
+            this.ResellValue = weapon.ResellValue;
+            this.Name = weapon.Name;
+            this.Strength = weapon.Strength;
+        }
+
     }
 }

@@ -15,6 +15,10 @@ namespace OOP_RPG
         */
 
         // These are the Properties of our Class.
+      
+        public Game Game { get; set; }
+        public Shop Shop { get; set; }
+
         public string Name { get; set; }
         public int Strength { get; set; }
         public int Defense { get; set; }
@@ -28,14 +32,16 @@ namespace OOP_RPG
         public List<Weapon> WeaponsBag { get; set; }
         public List<Potion> PotionsBag { get; set; }
 
-        public Hero() {
+        public Hero(Game game, Shop shop) {
+            this.Game = game;
+            this.Shop = shop;
             this.ArmorsBag = new List<Armor>();
             this.WeaponsBag = new List<Weapon>();
             this.PotionsBag = new List<Potion>();
-            this.Strength = 10;
-            this.Defense = 10;
-            this.OriginalHP = 30;
-            this.CurrentHP = 30;
+            this.Strength = 100;
+            this.Defense = 100;
+            this.OriginalHP = 300;
+            this.CurrentHP = 300;
             this.Gold = 1000;
         }
            
@@ -64,7 +70,147 @@ namespace OOP_RPG
                 Console.WriteLine($"{p.Name} with {p.HP} HP");
             }
         }
-        
+
+        public void PresentItemMenu()
+        {
+            Console.WriteLine("Which type of item would you like to sell to the Shop?");
+            Console.WriteLine("1. Armor");
+            Console.WriteLine("2. Weapon");
+            Console.WriteLine("3. Potion");
+            Console.WriteLine("4. Go back to Shop Menu");
+            Console.WriteLine("5. Go back to Main Menu");
+
+            var selection = "";
+            do
+            {
+                selection = Console.ReadLine();
+            } while (string.IsNullOrEmpty(selection));
+
+            switch (selection)
+            {
+                case "1":
+                    ListArmor();
+                    break;
+                case "2":
+                    ListWeapons();
+                    break;
+                case "3":
+                    ListPotions();
+                    break;
+                case "4":
+                    Shop.Menu();
+                    break;
+                case "5":
+                    Game.MainMenu();
+                    break;
+                default:
+                    break;
+            }
+
+            Shop.Menu();
+
+        }
+
+        #region Armor Code
+        private void ListArmor()
+        {
+            if(ArmorsBag.Count() == 0)
+            {
+                Console.WriteLine("You have no Armor to sell.");
+                return;
+            }
+
+            var count = 1;
+            foreach (var armor in ArmorsBag)
+            {
+                Console.WriteLine($"{count}. {armor.Name} - Original Value = {armor.OriginalValue}, Resell Value = {armor.ResellValue}, Defense = {armor.Defense}");
+                count++;
+            }
+
+            var strSelection = "";
+            do
+            {
+                strSelection = Console.ReadLine();
+            } while (string.IsNullOrEmpty(strSelection));
+
+            var intSelection = Convert.ToInt32(strSelection);
+            if (intSelection > 0 && intSelection <= ArmorsBag.Count())
+            {
+                var armor = ArmorsBag[intSelection - 1];
+                
+                Gold += armor.ResellValue;
+                ArmorsBag.Remove(armor);
+                this.Shop.ArmorList.Add(armor);                
+            }
+        }
+        #endregion
+
+        #region Potion Code
+        private void ListPotions()
+        {
+            if (PotionsBag.Count() == 0)
+            {
+                Console.WriteLine("You have no Potion to sell.");
+                return;
+            }
+            var count = 1;
+            foreach (var potion in PotionsBag)
+            {
+                Console.WriteLine($"{count}. {potion.Name} - Original Value = {potion.OriginalValue}, Resell Value = {potion.ResellValue}, HP = {potion.HP}");
+                count++;
+            }
+
+            var strSelection = "";
+            do
+            {
+                strSelection = Console.ReadLine();
+            } while (string.IsNullOrEmpty(strSelection));
+
+            var intSelection = Convert.ToInt32(strSelection);
+            if (intSelection > 0 && intSelection <= PotionsBag.Count())
+            {
+                var potion = PotionsBag[intSelection - 1];            
+                Gold += potion.ResellValue;
+                PotionsBag.Remove(potion);
+                this.Shop.PotionsList.Add(potion);
+                
+            }
+        }
+        #endregion
+
+        #region Weapons Code
+        private void ListWeapons()
+        {
+            if (WeaponsBag.Count() == 0)
+            {
+                Console.WriteLine("You have no Weapons to sell.");
+                return;
+            }
+
+            var count = 1;
+            foreach (var weapon in WeaponsBag)
+            {
+                Console.WriteLine($"{count}. {weapon.Name} - Original Value = {weapon.OriginalValue}, Resell Value = {weapon.ResellValue}, Strnegth = {weapon.Strength}");
+                count++;
+            }
+
+            var strSelection = "";
+            do
+            {
+                strSelection = Console.ReadLine();
+            } while (string.IsNullOrEmpty(strSelection));
+
+            var intSelection = Convert.ToInt32(strSelection);
+            if (intSelection > 0 && intSelection <= WeaponsBag.Count())
+            {
+                var weapon = WeaponsBag[intSelection - 1];               
+                Gold += weapon.ResellValue;               
+                WeaponsBag.Remove(weapon);
+                Shop.WeaponsList.Add(weapon);                
+            }
+        }
+        #endregion
+
         public void EquipWeapon() {
             if(WeaponsBag.Any()) {
                 this.EquippedWeapon = this.WeaponsBag[0];

@@ -8,8 +8,8 @@ namespace OOP_RPG
         public Shop Shop { get; set; }
 
         public Game() {
-            Hero = new Hero();
             Shop = new Shop(this);
+            Hero = new Hero(this, this.Shop);
         }
             
         public void Start() {
@@ -83,7 +83,7 @@ namespace OOP_RPG
             Console.ReadKey();
             this.MainMenu();
         }
-        
+                
         public void Inventory(){
             Hero.ShowInventory();
             Console.WriteLine("Press any key to return to main menu.");
