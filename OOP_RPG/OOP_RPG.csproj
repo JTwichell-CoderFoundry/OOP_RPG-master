@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AleHouse.cs" />
     <Compile Include="Armor.cs" />
     <Compile Include="Fight.cs" />
     <Compile Include="Game.cs" />

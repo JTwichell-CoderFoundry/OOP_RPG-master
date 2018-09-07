@@ -10,14 +10,14 @@ namespace OOP_RPG
 
         public Monster Enemy { get; set; }
 
-        public Game game { get; set; }
-        public Hero hero { get; set; }
+        public Game Game { get; set; }
+        public Hero Hero { get; set; }
         
         public Fight(Hero hero, Game game, Monster enemy) {
             //this.Monsters = new List<Monster>();     
             this.Enemy = enemy;
-            this.hero = hero;
-            this.game = game;
+            this.Hero = hero;
+            this.Game = game;
             //this.AddMonster("Squid", 9, 8, 20);
             //this.AddMonster("Goblin", 10, 10, 10);
             //this.AddMonster("Ghost", 5, 2, 1);
@@ -44,32 +44,38 @@ namespace OOP_RPG
         //}
 
         public void Start() {
-            //This is how we are fighting the 1st Monster in the list
 
-            //Default: Fight 1st Monster
-            //var enemy = this.Monsters[0];
+            if(Hero.BAC > .5)
+            {
+                Console.WriteLine($"{Hero.Name}'s BAC is {Hero.BAC} and is too drunk to fight. Go sleep it off!");
+                Game.MainMenu();
+            }
+                //This is how we are fighting the 1st Monster in the list
 
-            //Fight Last Monster
-            //var enemy = this.Monsters[this.Monsters.Count -1];
+                //Default: Fight 1st Monster
+                //var enemy = this.Monsters[0];
 
-            //Fight Second Monster
-            //var enemy = this.Monsters[1];
+                //Fight Last Monster
+                //var enemy = this.Monsters[this.Monsters.Count -1];
 
-            //The first monster with less than 20 hitpoints
-            //var enemy = this.Monsters.FirstOrDefault(m => m.CurrentHP < 20);
+                //Fight Second Monster
+                //var enemy = this.Monsters[1];
 
-            //The first monster with a strength of at least 11
-            //var enemy = this.Monsters.FirstOrDefault(m => m.Strength >= 11);
+                //The first monster with less than 20 hitpoints
+                //var enemy = this.Monsters.FirstOrDefault(m => m.CurrentHP < 20);
 
-            //A random monster - How do I generate a Random Numer between 0 and Monsters.Count -1??
-            //var random = new Random();
+                //The first monster with a strength of at least 11
+                //var enemy = this.Monsters.FirstOrDefault(m => m.Strength >= 11);
 
-            //var enemy = this.Monsters[random.Next(0, this.Monsters.Count)];
-            //this.Enemy = this.Monsters[random.Next(0, this.Monsters.Count)];
+                //A random monster - How do I generate a Random Numer between 0 and Monsters.Count -1??
+                //var random = new Random();
+
+                //var enemy = this.Monsters[random.Next(0, this.Monsters.Count)];
+                //this.Enemy = this.Monsters[random.Next(0, this.Monsters.Count)];
 
 
 
-            Console.WriteLine("You've encountered a " + Enemy.Name + "! " + Enemy.Strength + " Strength/" + Enemy.Defense + " Defense/" + 
+                Console.WriteLine("You've encountered a " + Enemy.Name + "! " + Enemy.Strength + " Strength/" + Enemy.Defense + " Defense/" +
             Enemy.CurrentHP + " HP. What will you do?");
             Console.WriteLine("1. Fight");
             var input = Console.ReadLine();
@@ -77,13 +83,13 @@ namespace OOP_RPG
                 this.HeroTurn();
             }
             else { 
-                this.game.MainMenu();
+                this.Game.MainMenu();
             }
         }
         
         public void HeroTurn(){
 
-           var compare = hero.Strength - Enemy.Defense;
+           var compare = Hero.Strength - Enemy.Defense;
            int damage;
            
            if(compare <= 0) {
@@ -109,17 +115,17 @@ namespace OOP_RPG
         public void MonsterTurn(){
            
            int damage;
-           var compare = this.Enemy.Strength - hero.Defense;
+           var compare = this.Enemy.Strength - Hero.Defense;
            if(compare <= 0) {
                damage = 1;
-               hero.CurrentHP -= damage;
+               Hero.CurrentHP -= damage;
            }
            else{
                damage = compare;
-               hero.CurrentHP -= damage;
+               Hero.CurrentHP -= damage;
            }
            Console.WriteLine(Enemy.Name + " does " + damage + " damage!");
-           if(hero.CurrentHP <= 0){
+           if(Hero.CurrentHP <= 0){
                this.Lose();
            }
            else
@@ -130,13 +136,13 @@ namespace OOP_RPG
         
         public void Win() {    
             Console.WriteLine(Enemy.Name + " has been defeated! You win the battle!");
-            this.hero.Gold += this.Enemy.Gold;
-            Console.WriteLine($"You earned {this.Enemy.Gold} pieces of Gold and now have {this.hero.Gold} Gold pieces");
+            this.Hero.Gold += this.Enemy.Gold;
+            Console.WriteLine($"You earned {this.Enemy.Gold} pieces of Gold and now have {this.Hero.Gold} Gold pieces");
 
             //I want to add the Monster's gold to the Hero's Gold...
-            this.hero.Gold += this.Enemy.Gold;
+            this.Hero.Gold += this.Enemy.Gold;
 
-            game.MainMenu();
+            Game.MainMenu();
         }
         
         public void Lose() {

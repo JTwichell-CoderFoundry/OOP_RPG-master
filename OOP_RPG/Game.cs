@@ -6,10 +6,12 @@ namespace OOP_RPG
     {
         public Hero Hero { get; set; }
         public Shop Shop { get; set; }
+        public AleHouse AleHouse { get; set; }
 
         public Game() {
             Shop = new Shop(this);
             Hero = new Hero(this, this.Shop);
+            AleHouse = new AleHouse(this, Shop);
         }
             
         public void Start() {
@@ -31,7 +33,10 @@ namespace OOP_RPG
             Console.WriteLine("2. View Inventory");
             Console.WriteLine("3. Fight Monster");
             Console.WriteLine("4. Go To Weapons Shop");
-            Console.WriteLine("5. Quit");
+            Console.WriteLine("5. Equip Armor");
+            Console.WriteLine("6. Equip Weapon");
+            Console.WriteLine("7. Visit Ale House");
+            Console.WriteLine("8. Quit");
 
             Console.Write("Enter your selection: ");
             var input = Console.ReadLine();
@@ -70,6 +75,15 @@ namespace OOP_RPG
                     Shop.Menu();
                     break;
                 case "5":
+                    EquipArmor();
+                    break;
+                case "6":
+                    EquipWeapon();
+                    break;
+                case "7":
+                    AleHouse.Menu();
+                    break;
+                case "8":
                     Environment.Exit(0);
                     break;
                 default:
@@ -77,6 +91,84 @@ namespace OOP_RPG
             }
         }
         
+        private void EquipArmor()
+        {
+            if (Hero.ArmorsBag.Count == 0)
+                Console.WriteLine("You have no Armor to equip");
+            else
+            {
+                var count = 1;
+                Console.WriteLine("-- Here is your Armor selection --");
+                foreach(var armor in Hero.ArmorsBag)
+                {
+                    Console.WriteLine($"{count}. {armor.Name} - Defense: {armor.Defense}");
+                    count++;
+                }
+
+                var selection = "";
+                do
+                {
+                    Console.Write("Which Armor would you like to equip?");
+                    selection = Console.ReadLine();
+                } while (string.IsNullOrEmpty(selection));
+
+                var intSelection = Convert.ToInt32(selection);
+                if(intSelection < 1 || intSelection > Hero.ArmorsBag.Count)
+                {
+                    Console.WriteLine("That is an invalid selection, please try again");
+                    EquipArmor();
+                }
+                else
+                {
+                    var armor = Hero.ArmorsBag[intSelection - 1];
+                    Hero.EquippedArmor = armor;
+                    Console.WriteLine($"You have equipped yourself with {armor.Name} and gained {armor.Defense} Defense");
+                    Hero.ArmorsBag.Remove(armor);
+                    Hero.Defense += armor.Defense;
+                }
+            }
+            MainMenu();
+
+        }
+
+        private void EquipWeapon()
+        {
+            if (Hero.WeaponsBag.Count == 0)
+                Console.WriteLine("You have no Weapons to equip");
+            else
+            {
+                var count = 1;
+                foreach (var weapon in Hero.WeaponsBag)
+                {
+                    Console.WriteLine($"{count}. {weapon.Name} - Strength: {weapon.Strength}");
+                    count++;
+                }
+
+                var selection = "";
+                do
+                {
+                    Console.Write("Which Weapon would you like to equip?");
+                    selection = Console.ReadLine();
+                } while (string.IsNullOrEmpty(selection));
+
+                var intSelection = Convert.ToInt32(selection);
+                if (intSelection < 1 || intSelection > Hero.WeaponsBag.Count)
+                {
+                    Console.WriteLine("That is an invalid selection, please try again");
+                    EquipWeapon();
+                }
+                else
+                {
+                    var weapon = Hero.WeaponsBag[intSelection - 1];
+                    Hero.EquippedWeapon = weapon;
+                    Console.WriteLine($"You have equipped yourself with the {weapon.Name} and gained {weapon.Strength} Strength");
+                    Hero.WeaponsBag.Remove(weapon);
+                    Hero.Strength += weapon.Strength;
+                }
+            }
+            MainMenu();
+        }
+
         private void Stats() {
             Hero.ShowStats();
             Console.WriteLine("Press any key to return to main menu.");

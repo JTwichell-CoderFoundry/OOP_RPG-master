@@ -27,11 +27,12 @@ namespace OOP_RPG
         public Weapon EquippedWeapon { get; set; }
         public Armor EquippedArmor { get; set; }
         public int Gold { get; set; }
+        public double BAC { get; set; }
 
         public List<Armor> ArmorsBag { get; set; }
         public List<Weapon> WeaponsBag { get; set; }
         public List<Potion> PotionsBag { get; set; }
-
+        
         public Hero(Game game, Shop shop) {
             this.Game = game;
             this.Shop = shop;
@@ -43,6 +44,12 @@ namespace OOP_RPG
             this.OriginalHP = 300;
             this.CurrentHP = 300;
             this.Gold = 1000;
+            this.BAC = 0;
+        }
+
+        public bool IsDrunk()
+        {
+            return BAC >= .5;
         }
            
         //These are the Methods of our Class.
@@ -52,6 +59,7 @@ namespace OOP_RPG
             Console.WriteLine($"Strength: {Strength}");
             Console.WriteLine($"Defense: {Defense}");
             Console.WriteLine($"Hitpoints: {CurrentHP} / {OriginalHP}");
+            Console.WriteLine($"BAC level: {BAC}");
         }
         
         public void ShowInventory() {
